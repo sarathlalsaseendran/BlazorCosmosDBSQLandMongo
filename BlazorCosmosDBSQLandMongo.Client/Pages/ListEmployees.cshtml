@@ -1,0 +1,51 @@
+﻿@using BlazorCosmosDBSQLandMongo.Shared.Models
+@page "/listemployees"
+@inject HttpClient Http
+
+<p>
+    <a href="/addemployee">Create New Employee</a>
+</p>
+@if (employees == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class='table'>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Gender</th>
+                <th>Company</th>
+                <th>Designation</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in employees)
+            {
+            <tr>
+                <td>@employee.Name</td>
+                <td>@employee.Address</td>
+                <td>@employee.Gender</td>
+                <td>@employee.Company</td>
+                <td>@employee.Designation</td>
+                <td>
+                    <a href='/editemployee/@employee.Id'>Edit</a>  |
+                    <a href='/deleteemployee/@employee.Id'>Delete</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+@functions {
+    Employee[] employees;
+
+    protected override async Task OnInitAsync()
+    {
+        employees = await Http.GetJsonAsync<Employee[]>
+("/api/Employees/Get");
+    }
+
+}

@@ -1,0 +1,66 @@
+﻿@using BlazorCosmosDBSQLandMongo.Shared.Models
+@page "/editemployee/{empId}"
+@inject HttpClient Http
+@inject Microsoft.AspNetCore.Blazor.Services.IUriHelper UriHelper
+
+<h3>Edit Employee</h3>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form>
+            <div class="form-group">
+                <label for="Name" class="control-label">Name</label>
+                <input for="Name" class="form-control" bind="@employee.Name" />
+            </div>
+            <div class="form-group">
+                <label for="Address" class="control-label">Address</label>
+                <input for="Address" class="form-control" bind="@employee.Address" />
+            </div>
+            <div class="form-group">
+                <label for="Gender" class="control-label">Gender</label>
+                <select for="Gender" class="form-control" bind="@employee.Gender">
+                    <option value="">-- Select Gender --</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Company" class="control-label">Company</label>
+                <input for="Company" class="form-control" bind="@employee.Company" />
+            </div>
+            <div class="form-group">
+                <label for="Designation" class="control-label">Designation</label>
+                <input for="Designation" class="form-control" bind="@employee.Designation" />
+            </div>
+            <div class="form-group">
+                <input type="button" value="Save" onclick="@(async () => await UpdateEmployee())" class="btn btn-default" />
+                <input type="button" value="Cancel" onclick="@Cancel" class="btn" />
+            </div>
+        </form>
+    </div>
+</div>
+@functions {
+
+[Parameter]
+string empId { get; set; }
+
+Employee employee = new Employee();
+
+protected override async Task OnInitAsync()
+{
+    employee = await Http.GetJsonAsync<Employee>("/api/Employees/Details/" + empId);
+}
+
+protected async Task UpdateEmployee()
+{
+    await Http.SendJsonAsync(HttpMethod.Put, "api/Employees/Edit", employee);
+    UriHelper.NavigateTo("/listemployees");
+
+}
+
+void Cancel()
+{
+    UriHelper.NavigateTo("/listemployees");
+}
+
+}
